@@ -60,11 +60,10 @@ CREATE TABLE orders (
 
 CREATE TABLE customer_order (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL CHECK (quantity > 0), 
-	status ENUM('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled') NOT NULL DEFAULT 'Pending',
-    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    customer_id INT NOT NULL,
+    order_id INT NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
 
 CREATE VIEW orders_display AS
@@ -84,15 +83,20 @@ JOIN
     
 CREATE VIEW customer_order_display AS
 SELECT 
-    co.id AS order_id,
+    co.id AS customer_order_id,
+    c.name AS customer_name,
     p.name AS product_name,
-    co.quantity,
-    co.status,
-    co.order_date
+    o.quantity,
+    o.status,      
+    o.order_date      
 FROM 
     customer_order co
 JOIN 
-    products p ON co.product_id = p.id;
+    orders o ON co.order_id = o.id
+JOIN 
+    customers c ON co.customer_id = c.id
+JOIN 
+    products p ON o.product_id = p.id;
 
 INSERT INTO customers (name, address, phone, email, password, contract_date, contract_no, photo) VALUES 
 ("Rilchev Mafia", 'Han Asparuh str., Vidin, Bulgaria', '1234567890123', 'rilchev_s_mafia@gfun.com', 'hashedpassword1', '2025-03-01', 'CNT-000001', 'images/RILCHEV.jpg');
@@ -120,8 +124,3 @@ SELECT * FROM order_processor;
 SELECT * FROM inventory_manager;
 SELECT * FROM orders_display;
 SELECT * FROM customer_order_display;
-
-
-
-	
-
