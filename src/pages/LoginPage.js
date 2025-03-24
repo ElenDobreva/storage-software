@@ -6,22 +6,35 @@ import "./LoginPage.css";
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("*");
-  const { fakeLogin } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    fakeLogin(username, role);
 
-    if (role === "user") {
-      navigate("/user-home");
-    } else if (role === "admin") {
-      navigate("/admin-home");
-    } else if (role === "processor") {
-      navigate("/processor-home");
-    } else if (role === "receiver") {
-      navigate("/receiver-home");
+    try {
+      const response = await login(username, password);
+      if (response) {
+        const { role } = response;
+        switch (role) {
+          case "Admin":
+            navigate("/admin-home");
+            break;
+          case "Order Processor":
+            navigate("/processor-home");
+            break;
+          case "Inventory Manager":
+            navigate("/receiver-home");
+            break;
+          default:
+            navigate("/user-home");
+        }
+      } else {
+        alert("Invalid credentials");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("An error occurred. Please try again.");
     }
   };
 
@@ -48,20 +61,10 @@ function LoginPage() {
             <div className="form-group">
               <label>Password: </label>
               <input
-                type="text"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </div>
-
-            <div className="form-group">
-              <label>Role: </label>
-              <select value={role} onChange={(e) => setRole(e.target.value)}>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-                <option value="processor">Processor</option>
-                <option value="receiver">Receiver</option>
-              </select>
             </div>
 
             <button type="submit" className="login-btn">
