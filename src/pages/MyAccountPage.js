@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "./MyAccountPage.css";
@@ -7,16 +7,27 @@ function MyAccountPage() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const isCustomer = user.role === "user";
-
   const [profile, setProfile] = useState({
-    username: user.username || "",
-    email: user.email || "",
-    phone: user.phone || "",
-    address: user.address || "",
-    contractDate: user.contractDate || "",
-    constractNumber: user.constractNumber || "",
+    username: "",
+    email: "",
+    phone: "",
+    address: "",
+    contractDate: "",
+    contractNumber: "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setProfile({
+        username: user.username || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        address: user.address || "",
+        contractDate: user.contractDate || "",
+        contractNumber: user.contractNumber || "",
+      });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,7 +35,7 @@ function MyAccountPage() {
   };
 
   const handleBackHome = () => {
-    switch (user.role) {
+    switch (user?.role) {
       case "admin":
         navigate("/admin-home");
         break;
@@ -40,6 +51,12 @@ function MyAccountPage() {
     }
   };
 
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+  const isCustomer = user.role === "user";
+
   return (
     <div className="myaccount-container">
       <div className="myaccount-header">
@@ -52,7 +69,7 @@ function MyAccountPage() {
         <img src="images/profile-placeholder.png" alt="Profile" />
       </div>
 
-      <div className="account=fields">
+      <div className="account-fields">
         <h2>My Account</h2>
 
         {!isCustomer && (
@@ -62,7 +79,7 @@ function MyAccountPage() {
               <input
                 type="text"
                 name="username"
-                value="{profile.username}"
+                value={profile.username}
                 onChange={handleChange}
                 disabled
               />
@@ -73,7 +90,7 @@ function MyAccountPage() {
               <input
                 type="email"
                 name="email"
-                value="{profile.email}"
+                value={profile.email}
                 onChange={handleChange}
                 disabled
               />
@@ -84,7 +101,7 @@ function MyAccountPage() {
               <input
                 type="text"
                 name="phone"
-                value="{profile.phone}"
+                value={profile.phone}
                 onChange={handleChange}
                 disabled
               />
@@ -99,7 +116,7 @@ function MyAccountPage() {
               <input
                 type="text"
                 name="username"
-                value="{profile.username}"
+                value={profile.username}
                 onChange={handleChange}
                 disabled
               />
@@ -110,7 +127,7 @@ function MyAccountPage() {
               <input
                 type="email"
                 name="email"
-                value="{profile.email}"
+                value={profile.email}
                 onChange={handleChange}
                 disabled
               />
@@ -121,7 +138,7 @@ function MyAccountPage() {
               <input
                 type="text"
                 name="phone"
-                value="{profile.phone}"
+                value={profile.phone}
                 onChange={handleChange}
                 disabled
               />
@@ -132,7 +149,7 @@ function MyAccountPage() {
               <input
                 type="text"
                 name="address"
-                value="{profile.address}"
+                value={profile.address}
                 onChange={handleChange}
                 disabled
               />
@@ -143,7 +160,7 @@ function MyAccountPage() {
               <input
                 type="date"
                 name="contractDate"
-                value="{profile.contractDate}"
+                value={profile.contractDate}
                 onChange={handleChange}
                 disabled
               />
@@ -154,7 +171,7 @@ function MyAccountPage() {
               <input
                 type="text"
                 name="contractNumber"
-                value="{profile.contractNumber}"
+                value={profile.contractNumber}
                 onChange={handleChange}
                 disabled
               />
