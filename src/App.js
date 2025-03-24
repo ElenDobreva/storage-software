@@ -1,72 +1,27 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import ProtectedRoute from "./components/ProtectedRoute";
-import RoleBasedRoute from "./components/RoleBasedRoute";
-
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Products from "./pages/Products";
-import ProductForm from "./pages/ProductForm";
-import Requests from "./pages/Requests";
-import Users from "./pages/Users";
-import NotFound from "./pages/NotFound";
+import LoginPage from "./pages/LoginPage";
+import UserHomePage from "./pages/UserHomePage";
+import AdminHomePage from "./pages/AdminHomePage";
+import ReceiverHomePage from "./pages/ReceiverHomePage";
+import ProcessorHomePage from "./pages/ProcessorHomePage";
+import MyAccountPage from "./pages/MyAccountPage";
+import CartPage from "./pages/CartPage";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <Header />
-        <div style={{ minHeight: "80vh" }}>
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/users"
-              element={
-                <RoleBasedRoute allowedRoles={["admin"]}>
-                  <Users />
-                </RoleBasedRoute>
-              }
-            />
-            <Route
-              path="/products"
-              element={
-                <ProtectedRoute>
-                  <Products />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/products/NEW"
-              element={
-                <ProtectedRoute>
-                  <ProductForm />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/requests"
-              element={
-                <ProtectedRoute>
-                  <Requests />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-        <Footer />
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/user-home" element={<UserHomePage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/admin-home" element={<AdminHomePage />} />
+          <Route path="/processor-home" element={<ProcessorHomePage />} />
+          <Route path="/receiver-home" element={<ReceiverHomePage />} />
+          <Route path="/account" element={<MyAccountPage />} />
+        </Routes>
       </Router>
     </AuthProvider>
   );
