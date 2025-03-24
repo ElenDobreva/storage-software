@@ -36,13 +36,13 @@ function MyAccountPage() {
 
   const handleBackHome = () => {
     switch (user?.role) {
-      case "admin":
+      case "Admin":
         navigate("/admin-home");
         break;
-      case "receiver":
+      case "Inventory Manager":
         navigate("/receiver-home");
         break;
-      case "processor":
+      case "Order Processor":
         navigate("/processor-home");
         break;
       default:
