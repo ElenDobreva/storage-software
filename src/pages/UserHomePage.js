@@ -35,7 +35,7 @@ function UserHomePage() {
             </div>
 
             <div className="header-center">
-            <span className="storage-png">Storage snimka</span>
+            <span className="storage-png">Storage snimka</span> {/* Какво е 'storage snimka' ??? */}
             </div>
 
             <div className="header-right">
