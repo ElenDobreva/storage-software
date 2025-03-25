@@ -12,6 +12,7 @@
 /build
 libs
 com
+DatabaseConfig.java
 
 # misc
 .DS_Store
