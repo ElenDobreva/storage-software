@@ -40,7 +40,7 @@ function UserHomePage() {
 
             <div className="header-right">
             <button className="cart-btn" onClick={handleCart}>
-                BRUM
+                Cart
             </button>
             </div>
         </header>
@@ -52,12 +52,12 @@ function UserHomePage() {
             </li>
             <li>
                 <button className="nav-btn" onClick={handleAccount}>
-                My Account
+                    My Account
                 </button>
             </li>
             <li>
                 <button className="nav-btn" onClick={handleLogout}>
-                Log Out
+                    Log Out
                 </button>
             </li>
             </ul>
@@ -73,8 +73,8 @@ function UserHomePage() {
         </main>
 
         <footer className="user-home-footer">
-            <div className="contact-section">Aloo</div>
-            <div className="info-section">ZDR</div>
+            <div className="contact-section">Contacts</div>
+            <div className="info-section">Info</div>
         </footer>
         </div>
     );
