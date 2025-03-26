@@ -10,19 +10,19 @@ function LoginPage() {
     const { user, login } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    if (user) {
-        switch (user.role) {
-            case 'Admin':
-                return <Navigate to="/admin-home" replace />;
-            case 'User':
-                return <Navigate to="/user-home" replace />;
-            case 'Order Processor':
-                return <Navigate to="/processor-home" replace />;
-            case 'Inventory Manager':
-                return <Navigate to="/receiver-home" replace />;
-            default:;
-        }
-    }
+    // if (user) {
+    //     switch (user.role) {
+    //         case 'ADMIN':
+    //             return <Navigate to="/admin-home" replace />;
+    //         case 'CUSTOMER':
+    //             return <Navigate to="/user-home" replace />;
+    //         case 'ORDER_PROCESSOR':
+    //             return <Navigate to="/processor-home" replace />;
+    //         case 'INVENTORY_MANAGER':
+    //             return <Navigate to="/receiver-home" replace />;
+    //         default:;
+    //     }
+    // }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,18 +32,18 @@ function LoginPage() {
             if (response) {
                 const { role } = response;
                 switch (role) {
-                  case "Admin":
-                    navigate("/admin-home");
-                    break;
-                  case "Order Processor":
-                    navigate("/processor-home");
-                    break;
-                  case "Inventory Manager":
-                    navigate("/receiver-home");
-                    break;
-                  default:
-                    navigate("/user-home");
-                }
+                    case "ADMIN":
+                      navigate("/admin-home");
+                      break;
+                    case "ORDER_PROCESSOR":
+                      navigate("/processor-home");
+                      break;
+                    case "INVENTORY_MANAGER":
+                      navigate("/receiver-home");
+                      break;
+                    default:
+                      navigate("/user-home");
+                  }
             } else {
                 alert("Invalid credentials");
             }
