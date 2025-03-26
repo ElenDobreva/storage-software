@@ -9,12 +9,16 @@ function AdminHomePage() {
     const [showAddRow, setShowAddRow] = useState(false);
     const [newProfile, setNewProfile] = useState({
         email: "",
-        username: "",
+        name: "",
         phone: "",
+        password: "",
         contractDate: "",
         contractNo: "",
         role: "",
     });
+
+    
+    const [passwordVisibility, setPasswordVisibility] = useState({});
 
     useEffect(() => {
         fetchUsers();
@@ -25,6 +29,13 @@ function AdminHomePage() {
             const response = await fetch("http://localhost:8080/api/users");
             const data = await response.json();
             setProfiles(data);
+
+            
+            const visibilityState = {};
+            data.forEach((user) => {
+                visibilityState[user.id] = false; 
+            });
+            setPasswordVisibility(visibilityState);
         } catch (error) {
             console.error("Error fetching users:", error);
         }
@@ -64,18 +75,32 @@ function AdminHomePage() {
                 setShowAddRow(false);
                 setNewProfile({
                     email: "",
-                    username: "",
+                    name: "",
                     phone: "",
+                    password: "",
                     contractDate: "",
                     contractNo: "",
                     role: "",
                 });
+
+                
+                setPasswordVisibility((prev) => ({
+                    ...prev,
+                    [addedUser.id]: false, 
+                }));
             } else {
                 alert("Failed to add user");
             }
         } catch (error) {
             console.error("Error adding user:", error);
         }
+    };
+
+    const togglePasswordVisibility = (userId) => {
+        setPasswordVisibility((prev) => ({
+            ...prev,
+            [userId]: !prev[userId], 
+        }));
     };
 
     const handleEdit = async (profileId, updatedProfile) => {
@@ -115,12 +140,13 @@ function AdminHomePage() {
         }
     };
 
-    const hadnleCancelNewProfile = () => {
+    const handleCancelNewProfile = () => {
         setShowAddRow(false);
         setNewProfile({
             email: "",
-            username: "",
+            name: "",
             phone: "",
+            password: "",
             contractDate: "",
             contractNo: "",
             role: "",
@@ -164,8 +190,9 @@ function AdminHomePage() {
                         <thead>
                             <tr>
                                 <th>Email</th>
-                                <th>Username</th>
+                                <th>Name</th>
                                 <th>Phone</th>
+                                <th>Password</th>
                                 <th>Contract Date</th>
                                 <th>Contract No</th>
                                 <th>Role</th>
@@ -176,10 +203,21 @@ function AdminHomePage() {
                             {profiles.map((profile) => (
                                 <tr key={profile.id}>
                                     <td>{profile.email}</td>
-                                    <td>{profile.username}</td>
+                                    <td>{profile.name}</td>
                                     <td>{profile.phone}</td>
-                                    <td>{profile.role === "user" ? profile.contractDate : ""}</td>
-                                    <td>{profile.role === "user" ? profile.contractNo : ""}</td>
+                                    <td>
+                                        {passwordVisibility[profile.id]
+                                            ? profile.password 
+                                            : "••••••"} {}
+                                        <button
+                                            className="toggle-password-btn"
+                                            onClick={() => togglePasswordVisibility(profile.id)}
+                                        >
+                                            {passwordVisibility[profile.id] ? "Hide" : "Show"}
+                                        </button>
+                                    </td>
+                                    <td>{profile.role === "CUSTOMER" ? profile.contractDate : ""}</td>
+                                    <td>{profile.role === "CUSTOMER" ? profile.contractNo : ""}</td>
                                     <td>{profile.role}</td>
                                     <td>
                                         <button
@@ -213,8 +251,8 @@ function AdminHomePage() {
                                     <td>
                                         <input
                                             type="text"
-                                            name="username"
-                                            value={newProfile.username}
+                                            name="name"
+                                            value={newProfile.name}
                                             onChange={handleNewProfileChange}
                                         />
                                     </td>
@@ -229,7 +267,16 @@ function AdminHomePage() {
                                     </td>
 
                                     <td>
-                                        {newProfile.role === "user" ? (
+                                        <input
+                                            type="password"
+                                            name="password"
+                                            value={newProfile.password}
+                                            onChange={handleNewProfileChange}
+                                        />
+                                    </td>
+
+                                    <td>
+                                        {newProfile.role === "CUSTOMER" ? (
                                             <input
                                                 type="date"
                                                 name="contractDate"
@@ -247,7 +294,7 @@ function AdminHomePage() {
                                         )}
                                     </td>
                                     <td>
-                                        {newProfile.role === "user" ? (
+                                        {newProfile.role === "CUSTOMER" ? (
                                             <input
                                                 type="text"
                                                 name="contractNo"
@@ -271,10 +318,10 @@ function AdminHomePage() {
                                             onChange={handleNewProfileChange}
                                         >
                                             <option value="">Select role</option>
-                                            <option value="user">user</option>
-                                            <option value="admin">admin</option>
-                                            <option value="receiver">receiver</option>
-                                            <option value="processor">processor</option>
+                                            <option value="CUSTOMER">Customer</option>
+                                            <option value="ADMIN">Admin</option>
+                                            <option value="INVENTORY_MANAGER">Inventory Manager</option>
+                                            <option value="ORDER_PROCESSOR">Order processor</option>
                                         </select>
                                     </td>
 
@@ -284,7 +331,7 @@ function AdminHomePage() {
                                         </button>
                                         <button
                                             className="cancel-btn"
-                                            onClick={hadnleCancelNewProfile}
+                                            onClick={handleCancelNewProfile}
                                         >
                                             Cancel
                                         </button>
