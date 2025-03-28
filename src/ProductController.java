@@ -19,10 +19,10 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Product updateProductQuantity(@PathVariable int id, @RequestBody Product updatedProduct) {
+    public Product updateProductQuantity(@PathVariable("id") int id, @RequestBody Product updatedProduct) {
         return productRepository.findById(id).map(product -> {
             product.setQuantity(updatedProduct.getQuantity());
             return productRepository.save(product);
         }).orElseThrow(() -> new RuntimeException("Product not found with id " + id));
-    }
+}
 }
