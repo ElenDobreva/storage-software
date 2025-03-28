@@ -12,7 +12,8 @@
 /build
 libs
 com
-DatabaseConfig.java
+*.java
+*.class
 
 # misc
 .DS_Store
@@ -24,3 +25,4 @@ DatabaseConfig.java
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
