@@ -1,19 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ReceiverHomePage.css";
 
 function ReceiverHomePage() {
   const navigate = useNavigate();
-
   const [sidebar, setSidebar] = useState(false);
+  const [products, setProducts] = useState([]);
 
   const toggleSidebar = () => {
     setSidebar(!sidebar);
-  };
-
-  const [showEmailForm, setShowEmailForm] = useState(false);
-  const toggleEmailForm = () => {
-    setShowEmailForm(!showEmailForm);
   };
 
   const handleAccount = () => {
@@ -24,40 +19,42 @@ function ReceiverHomePage() {
     navigate("/");
   };
 
-  const [products, setProducts] = useState([
-    { id: 1, name: "Product 1", quantity: 50 },
-    { id: 2, name: "Product 2", quantity: 25 },
-    { id: 3, name: "Product 3", quantity: 15 },
-  ]);
+  // Fetch products from the backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/products");
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
 
-  const handleIncrement = (id) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, quantity: p.quantity + 1 } : p))
-    );
-  };
+    fetchProducts();
+  }, []);
 
-  const handleDecrement = (id) => {
-    setProducts((prev) =>
-      prev.map((p) =>
-        p.id === id && p.quantity > 0 ? { ...p, quantity: p.quantity - 1 } : p
-      )
-    );
-  };
+  // Handle quantity change
+  const handleQuantityChange = async (id, newQuantity) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quantity: newQuantity }),
+      });
 
-  const [emailData, setEmailData] = useState({
-    to: "",
-    subject: "",
-    message: "",
-  });
-  const handleEmailChange = (e) => {
-    setEmailData({ ...emailData, [e.targer.name]: e.target.value });
-  };
-  const handleEmailSend = (e) => {
-    e.preventDefault();
-    alert(
-      `sending email to ${emailData.to} with subject "${emailData.subject}"`
-    );
-    setShowEmailForm(false);
+      if (response.ok) {
+        setProducts((prev) =>
+          prev.map((product) =>
+            product.id === id ? { ...product, quantity: newQuantity } : product
+          )
+        );
+      } else {
+        alert("Failed to update product quantity");
+      }
+    } catch (error) {
+      console.error("Error updating product quantity:", error);
+    }
   };
 
   return (
@@ -68,7 +65,7 @@ function ReceiverHomePage() {
           <div className="bar"></div>
           <div className="bar"></div>
         </div>
-        <h2 className="receiver-title">Receiver Page</h2>
+        <h2 className="receiver-title">Inventory Manager</h2>
       </header>
 
       <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
@@ -92,20 +89,33 @@ function ReceiverHomePage() {
       <main className="receiver-home-main">
         <div className="products-banner">Products</div>
         <div className="products-grid">
-          {products.map((prod) => (
-            <div key={prod.id} className="product-card">
-              <p>{prod.name}</p>
-              <p>Quantity: {prod.quantity}</p>
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="product-card"
+              style={{
+                backgroundColor: product.quantity < 5 ? "#ffcccc" : "#fff",
+              }}
+            >
+              <p>{product.name}</p>
+              <p>Quantity: {product.quantity}</p>
               <div className="product-actions">
                 <button
                   className="plus-btn"
-                  onClick={() => handleIncrement(prod.id)}
+                  onClick={() =>
+                    handleQuantityChange(product.id, product.quantity + 1)
+                  }
                 >
                   +
                 </button>
                 <button
                   className="minus-btn"
-                  onClick={() => handleDecrement(prod.id)}
+                  onClick={() =>
+                    handleQuantityChange(
+                      product.id,
+                      product.quantity > 0 ? product.quantity - 1 : 0
+                    )
+                  }
                 >
                   -
                 </button>
@@ -114,47 +124,6 @@ function ReceiverHomePage() {
           ))}
         </div>
       </main>
-
-      <button className="floating-btn" onClick={toggleEmailForm}>
-        Email
-      </button>
-
-      {showEmailForm && (
-        <div className="email-form-overlay">
-          <div className="email-form-container">
-            <h3>Send Email</h3>
-            <form onSubmit={handleEmailSend}>
-              <label>To:</label>
-              <input
-                type="text"
-                name="to"
-                value={emailData.to}
-                onChange={handleEmailChange}
-              />
-              <label>Subject:</label>
-              <input
-                type="text"
-                name="subject"
-                value={emailData.subject}
-                onChange={handleEmailChange}
-              />
-              <label>Message:</label>
-              <textarea
-                name="message"
-                value={emailData.message}
-                onChange={handleEmailChange}
-              />
-
-              <div className="email-form-actions">
-                <button type="submit">Send</button>
-                <button type="button" onClick={() => setShowEmailForm(false)}>
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

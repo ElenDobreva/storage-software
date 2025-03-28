@@ -101,24 +101,43 @@
 
 .products-grid {
   display: flex;
+  flex-direction: column; /* Vertical layout */
   gap: 20px;
-  justify-content: center;
+  padding: 20px;
 }
 
-.products-actions {
+.product-card {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.product-card p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.product-actions {
   display: flex;
-  gap: 5px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .plus-btn,
 .minus-btn {
-  background: #ff5a8f;
+  background: #5de4e0;
   color: #fff;
   border: none;
-  width: 30px;
-  height: 30px;
+  padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.plus-btn:hover,
+.minus-btn:hover {
+  background: #4cc0c0;
 }
 
 .floating-btn {
