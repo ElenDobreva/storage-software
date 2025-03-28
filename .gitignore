@@ -2,3 +2,5 @@ com/
 libs/
 node_modules
 src/DatabaseConfig.java
+WebConfig.class
+WebConfig$1.class
