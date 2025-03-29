@@ -1,6 +1,7 @@
 package com.warehouse.backend;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class Order {
     private Date orderDate = new Date();
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference 
     private List<OrderItem> items;
 
     public enum Status {

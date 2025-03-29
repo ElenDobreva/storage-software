@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api/orders")
@@ -51,6 +53,42 @@ public class OrderController {
         }
 
         return order;
+    }
+
+    @GetMapping
+    public List<OrderDTO> getAllOrders() {
+        return orderRepository.findAll().stream().map(order -> {
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setId(order.getId());
+            orderDTO.setStatus(order.getStatus().toString());
+            orderDTO.setOrderDate(order.getOrderDate().toString());
+            orderDTO.setItems(order.getItems().stream().map(item -> {
+                OrderItemDTO itemDTO = new OrderItemDTO();
+                itemDTO.setProductId(item.getProduct().getId());
+                itemDTO.setProductName(item.getProduct().getName());
+                itemDTO.setQuantity(item.getQuantity());
+                return itemDTO;
+            }).collect(Collectors.toList()));
+            return orderDTO;
+        }).collect(Collectors.toList());
+    }
+
+    @GetMapping("/{orderId}")
+    public Order getOrderDetails(@PathVariable Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id " + orderId));
+    }
+
+    @PutMapping("/{orderId}/status")
+    public Order updateOrderStatus(@PathVariable Long orderId, @RequestBody String status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id " + orderId));
+        try {
+            order.setStatus(Order.Status.valueOf(status));
+            return orderRepository.save(order);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid status: " + status);
+        }
     }
 
     @GetMapping("/customer/{customerId}")
