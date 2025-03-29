@@ -30,6 +30,7 @@ public class AuthController {
             if (request.getPassword().equals(user.getPassword())) {
                 System.out.println("Password matched for user: " + user.getName());
                 return new AuthResponse(
+                        user.getId(),
                         user.getName(),
                         user.getRole().name(),
                         user.getEmail(),
