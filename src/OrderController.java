@@ -62,6 +62,7 @@ public class OrderController {
             orderDTO.setId(order.getId());
             orderDTO.setStatus(order.getStatus().toString());
             orderDTO.setOrderDate(order.getOrderDate().toString());
+            orderDTO.setCustomerName(order.getCustomer().getName()); 
             orderDTO.setItems(order.getItems().stream().map(item -> {
                 OrderItemDTO itemDTO = new OrderItemDTO();
                 itemDTO.setProductId(item.getProduct().getId());
