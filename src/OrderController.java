@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -81,15 +82,12 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/status")
-    public Order updateOrderStatus(@PathVariable Long orderId, @RequestBody String status) {
+    public Order updateOrderStatus(@PathVariable("orderId") Long orderId, @RequestBody Map<String, String> body) {
+        String status = body.get("status"); // Extract the "status" field from the JSON
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found with id " + orderId));
-        try {
-            order.setStatus(Order.Status.valueOf(status));
-            return orderRepository.save(order);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid status: " + status);
-        }
+        order.setStatus(Order.Status.valueOf(status)); // Convert the string to an enum
+        return orderRepository.save(order);
     }
 
     @GetMapping("/customer/{customerId}")
