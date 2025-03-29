@@ -124,3 +124,24 @@
   padding: 0.3rem;
   cursor: pointer;
 }
+
+.order-details {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.order-details h3 {
+    margin-top: 0;
+}
+
+.order-details ul {
+    list-style: none;
+    padding: 0;
+}
+
+.order-details li {
+    margin-bottom: 5px;
+}
