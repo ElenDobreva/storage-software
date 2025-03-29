@@ -6,8 +6,7 @@ function ProcessorHomePage() {
     const navigate = useNavigate();
     const [sidebar, setSidebar] = useState(false);
     const [orders, setOrders] = useState([]);
-    const [selectedOrder, setSelectedOrder] = useState(null);
-    const [orderDetails, setOrderDetails] = useState(null);
+    const [expandedOrders, setExpandedOrders] = useState([]); // Track expanded orders
 
     const toggleSidebar = () => {
         setSidebar(!sidebar);
@@ -39,16 +38,6 @@ function ProcessorHomePage() {
         fetchOrders();
     }, []);
 
-    const fetchOrderDetails = async (orderId) => {
-        try {
-            const response = await fetch(`http://localhost:8080/api/orders/${orderId}`);
-            const data = await response.json();
-            setOrderDetails(data);
-        } catch (error) {
-            console.error("Error fetching order details:", error);
-        }
-    };
-
     const handleStatusChange = async (orderId, newStatus) => {
         try {
             const response = await fetch(`http://localhost:8080/api/orders/${orderId}/status`, {
@@ -71,9 +60,12 @@ function ProcessorHomePage() {
         }
     };
 
-    const handleOrderClick = (orderId) => {
-        setSelectedOrder(orderId);
-        fetchOrderDetails(orderId);
+    const toggleOrderDetails = (orderId) => {
+        setExpandedOrders((prevExpandedOrders) =>
+            prevExpandedOrders.includes(orderId)
+                ? prevExpandedOrders.filter((id) => id !== orderId) 
+                : [...prevExpandedOrders, orderId] 
+        );
     };
 
     return (
@@ -121,43 +113,48 @@ function ProcessorHomePage() {
                     </thead>
                     <tbody>
                         {orders.map((order) => (
-                            <tr key={order.id}>
-                                <td>{order.id}</td>
-                                <td>{order.customer.name}</td>
-                                <td>
-                                    <select
-                                        value={order.status}
-                                        onChange={(e) =>
-                                            handleStatusChange(order.id, e.target.value)
-                                        }
-                                    >
-                                        <option value="Pending">Pending</option>
-                                        <option value="Processing">Processing</option>
-                                        <option value="Shipped">Shipped</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <button onClick={() => handleOrderClick(order.id)}>
-                                        View Details
-                                    </button>
-                                </td>
-                            </tr>
+                            <React.Fragment key={order.id}>
+                                <tr>
+                                    <td>{order.id}</td>
+                                    <td>{order.customerName || "Unknown Customer"}</td>
+                                    <td>
+                                        <select
+                                            value={order.status}
+                                            onChange={(e) =>
+                                                handleStatusChange(order.id, e.target.value)
+                                            }
+                                        >
+                                            <option value="Pending">Pending</option>
+                                            <option value="Processing">Processing</option>
+                                            <option value="Shipped">Shipped</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button onClick={() => toggleOrderDetails(order.id)}>
+                                            {expandedOrders.includes(order.id) ? "Hide Details" : "View Details"}
+                                        </button>
+                                    </td>
+                                </tr>
+                                {expandedOrders.includes(order.id) && (
+                                    <tr>
+                                        <td colSpan="4">
+                                            <div className="order-details">
+                                                <h3>Products</h3>
+                                                <ul>
+                                                    {order.items.map((item) => (
+                                                        <li key={item.productId}>
+                                                            {item.productName} - Quantity: {item.quantity}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                            </React.Fragment>
                         ))}
                     </tbody>
                 </table>
-
-                {selectedOrder && orderDetails && (
-                    <div className="order-details">
-                        <h3>Order Details (ID: {selectedOrder})</h3>
-                        <ul>
-                            {orderDetails.items.map((item) => (
-                                <li key={item.id}>
-                                    {item.product.name} - Quantity: {item.quantity}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
             </main>
         </div>
     );
