@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext"; // Import AuthContext
+import { AuthContext } from "../context/AuthContext";
 import "./CartPage.css";
 
 function CartPage() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { user } = useContext(AuthContext); // Get the logged-in user from AuthContext
+    const { user } = useContext(AuthContext); 
     const cart = location.state?.cart || [];
 
     const handleBackHome = () => {
