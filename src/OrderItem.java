@@ -29,6 +29,18 @@ public class OrderItem {
         this.id = id;
     }
 
+    public void setOrderId(Long orderId) {
+        Order order = new Order();
+        order.setId(orderId);
+        this.order = order;
+    }
+    
+    public void setProductId(int productId) {
+        Product product = new Product();
+        product.setId(productId);
+        this.product = product;
+    }
+
     public Order getOrder() {
         return order;
     }

@@ -36,6 +36,12 @@ public class Order {
         return id;
     }
 
+    public void setCustomerId(Long customerId) {
+        User customer = new User();
+        customer.setId(customerId);
+        this.customer = customer;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

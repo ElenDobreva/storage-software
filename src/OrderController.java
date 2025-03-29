@@ -22,14 +22,14 @@ public class OrderController {
     @Autowired
     private OrderItemRepository orderItemRepository;
 
-    @PostMapping
-    public Order createOrder(@RequestParam Long customerId, @RequestBody List<OrderItemRequest> items) {
+    @PostMapping("/{customerId}")
+    public Order createOrder(@PathVariable("customerId") Long customerId, @RequestBody List<OrderItemRequest> items) {
         User customer = userRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("Customer not found with id " + customerId));
 
         Order order = new Order();
         order.setCustomerId(customer.getId());
-        order.setStatus("Pending");
+        order.setStatus(Order.Status.Pending);
         order = orderRepository.save(order);
 
         for (OrderItemRequest itemRequest : items) {
@@ -55,6 +55,8 @@ public class OrderController {
 
     @GetMapping("/customer/{customerId}")
     public List<Order> getOrdersByCustomer(@PathVariable Long customerId) {
-        return orderRepository.findByCustomerId(customerId);
+        User customer = userRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found with id " + customerId));
+        return orderRepository.findByCustomer(customer);
     }
 }
