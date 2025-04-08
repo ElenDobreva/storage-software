@@ -82,11 +82,11 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/status")
-    public Order updateOrderStatus(@PathVariable("orderId") Long orderId, @RequestBody Map<String, String> body) {
-        String status = body.get("status"); // Extract the "status" field from the JSON
+    public Order updateOrderStatus(@PathVariable("orderId") Long orderId, @RequestBody String status) {
+        status = status.replace("\"", ""); 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found with id " + orderId));
-        order.setStatus(Order.Status.valueOf(status)); // Convert the string to an enum
+        order.setStatus(Order.Status.valueOf(status)); 
         return orderRepository.save(order);
     }
 
