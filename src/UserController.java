@@ -53,16 +53,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable("id") Long id) {
-        System.out.println("Delete request received for user ID: " + id);
-    
-        if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found with id " + id);
-        }
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
+        if (!userRepository.existsById(id))
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body("Err: User doesn't exist");
     
         try {
             userRepository.deleteById(id);
-            System.out.println("User with ID " + id + " deleted successfully.");
+            return ResponseEntity.ok("SUCCESS");
         } catch (Exception e) {
             System.err.println("Error deleting user with ID " + id + ": " + e.getMessage());
             throw new RuntimeException("Failed to delete user with id " + id);
