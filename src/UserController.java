@@ -23,15 +23,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserById(@PathVariable("id") Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
 
-        if (optionalUser.isPresent()) {
+        if (optionalUser.isPresent())
             return ResponseEntity.ok(optionalUser.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .body("Err: User doesn't exist");
-        }
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                             .body("Err: User doesn't exist");
     }
 
     @PostMapping
